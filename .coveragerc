@@ -1,0 +1,15 @@
+[run]
+omit =
+        /usr/*
+        /tmp/*
+        /private/*
+        .tox/*
+        *.pyenv*
+        *venv*
+        */AppData/*
+        setup.py
+        main.py
+        *pathlib.py*
+
+[report]
+ignore_errors = True
