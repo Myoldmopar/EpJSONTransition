@@ -10,6 +10,7 @@ Welcome to EpJSON Transition's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   Hello, I am in the root of the docs.
 
 
 Indices and tables
