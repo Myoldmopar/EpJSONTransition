@@ -39,9 +39,9 @@ jobs:
 
     - name: Install Pip Dependencies
       shell: bash
-      run: pip install pyinstaller
+      run: pip install pyinstaller wheel
 
-    - name: Build
+    - name: Build for PyInstaller
       shell: bash
       run: pyinstaller --onefile epjson_transition.spec
 
@@ -53,7 +53,7 @@ jobs:
         asset_name: ${{ matrix.asset }}
         tag: ${{ github.ref }}
 
-    - name: Package for PyPi
+    - name: Build for PyPi
       shell: bash
       run: rm -rf dist/ build/ && ${{ matrix.python }} setup.py bdist_wheel sdist
 
@@ -61,4 +61,4 @@ jobs:
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
-        password: ${{ secrets.PyPiPW }}
+        password: ${{ secrets.PYPIPW }}
