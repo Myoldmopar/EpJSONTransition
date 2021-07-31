@@ -7,7 +7,9 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/Myoldmopar/EpJSONTransition?label=Coverage&style=for-the-badge)](https://coveralls.io/github/Myoldmopar/EpJSONTransition?branch=main)
 [![PEP8 Enforcement](https://img.shields.io/github/workflow/status/Myoldmopar/EpJSONTransition/Flake8?label=Flake8&style=for-the-badge)](https://github.com/Myoldmopar/EpJSONTransition/actions?query=workflow%3AFlake8)
 
-[![Releases](https://img.shields.io/github/workflow/status/Myoldmopar/EpJSONTransition/Releases?label=Releases&style=for-the-badge)](https://github.com/Myoldmopar/EpJSONTransition/actions?query=workflow%3AReleases)
+[![Releases](https://img.shields.io/github/workflow/status/Myoldmopar/EpJSONTransition/PyInstallerRelease?label=PyInstaller%20Release&style=for-the-badge)](https://github.com/Myoldmopar/EpJSONTransition/actions?query=workflow%3APyInstallerRelease)
+[![Releases](https://img.shields.io/github/workflow/status/Myoldmopar/EpJSONTransition/PyInstallerRelease?label=PyPI%20Release&style=for-the-badge)](https://github.com/Myoldmopar/EpJSONTransition/actions?query=workflow%3APyPIRelease)
+[![Releases](https://img.shields.io/pypi/wheel/EnergyPlus-EpJSON-Transition-Tool?label=PyPi%20Wheel&style=for-the-badge)](https://pypi.org/project/EnergyPlus-EpJSON-Transition-Tool/)
 
 Prototype tool for doing EpJSON transition
 
