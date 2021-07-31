@@ -8,13 +8,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            pyinstall_args: ""
           - os: ubuntu-18.04
-            pyinstall_args: ""
           - os: macos-10.15
-            pyinstall_args: --onefile --windowed
           - os: windows-2019
-            pyinstall_args: --windowed
 
     runs-on: ${{ matrix.os }}
 
@@ -32,7 +28,7 @@ jobs:
 
     - name: Build
       shell: bash
-      run: pyinstaller ${{ matrix.pyinstall_args }} epjson_transition.spec
+      run: pyinstaller --onefile epjson_transition.spec
 
     - name: Upload
       uses: actions/upload-artifact@v2
