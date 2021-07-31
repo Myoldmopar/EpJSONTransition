@@ -1,6 +1,9 @@
 name: Releases
 
-on: [push]
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   release:
@@ -33,12 +36,6 @@ jobs:
     - name: Build
       shell: bash
       run: pyinstaller --onefile epjson_transition.spec
-
-    - name: Upload
-      uses: actions/upload-artifact@v2
-      with:
-        name: EpJSON_Transition-${{ matrix.os }}
-        path: dist/EpJSON_Transition*
 
     - name: Upload
       uses: svenstaro/upload-release-action@v2
