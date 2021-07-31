@@ -11,12 +11,16 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
+            artifact: dist/EpJSON_Transition
             asset: EpJSON_Transition_Ubuntu2004
           - os: ubuntu-18.04
+            artifact: dist/EpJSON_Transition
             asset: EpJSON_Transition_Ubuntu1804
           - os: macos-10.15
+            artifact: dist/EpJSON_Transition
             asset: EpJSON_Transition_Mac1015
           - os: windows-2019
+            artifact: dist/EpJSON_Transition.exe
             asset: EpJSON_Transition_Windows
 
     runs-on: ${{ matrix.os }}
@@ -41,8 +45,6 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: dist/EpJSON_Transition*
+        file: ${{ matrix.artifact }}
         asset_name: ${{ matrix.asset }}
         tag: ${{ github.ref }}
-        overwrite: true
-        file_glob: true
