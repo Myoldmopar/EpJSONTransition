@@ -1,4 +1,4 @@
-name: Releases
+name: PyInstallerRelease
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
 
     - name: Install Pip Dependencies
       shell: bash
-      run: pip install pyinstaller wheel
+      run: pip install pyinstaller
 
     - name: Build for PyInstaller
       shell: bash
@@ -52,13 +52,3 @@ jobs:
         file: ${{ matrix.artifact }}
         asset_name: ${{ matrix.asset }}
         tag: ${{ github.ref }}
-
-    - name: Build for PyPi
-      shell: bash
-      run: rm -rf dist/ build/ && ${{ matrix.python }} setup.py bdist_wheel sdist
-
-    - name: Deploy on PyPi
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        user: __token__
-        password: ${{ secrets.PYPIPW }}
