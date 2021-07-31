@@ -13,15 +13,19 @@ jobs:
           - os: ubuntu-20.04
             artifact: dist/EpJSON_Transition
             asset: EpJSON_Transition_Ubuntu2004
+            python: python3
           - os: ubuntu-18.04
             artifact: dist/EpJSON_Transition
             asset: EpJSON_Transition_Ubuntu1804
+            python: python3
           - os: macos-10.15
             artifact: dist/EpJSON_Transition
             asset: EpJSON_Transition_Mac1015
+            python: python3
           - os: windows-2019
             artifact: dist/EpJSON_Transition.exe
             asset: EpJSON_Transition_Windows
+            python: python
 
     runs-on: ${{ matrix.os }}
 
@@ -48,3 +52,13 @@ jobs:
         file: ${{ matrix.artifact }}
         asset_name: ${{ matrix.asset }}
         tag: ${{ github.ref }}
+
+    - name: Package for PyPi
+      shell: bash
+      run: rm -rf dist/ build/ && ${{ matrix.python }} setup.py bdist_wheel sdist
+
+    - name: Deploy on PyPi
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PyPiPW }}

@@ -5,5 +5,5 @@ setup(
     version="0.1",
     description="A tool for converting EpJSON files which may need changing from one version to another",
     url='https://energyplus.net',
-    license='ModifiedBSD'
+    license='ModifiedBSD',
 )
