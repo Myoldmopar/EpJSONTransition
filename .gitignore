@@ -6,3 +6,5 @@ __pycache__
 __pycache__/
 htmlcov/
 docs/_build/
+build/
+dist/
