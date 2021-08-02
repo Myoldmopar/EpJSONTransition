@@ -1,4 +1,5 @@
 from typing import Dict
+
 from epjson_transition.exceptions import BadEpJSONVersion
 
 
@@ -12,6 +13,18 @@ class KnownVersions:
         '9.5': Version95,
         '9.6': Version96,
         '2022.1': Version2022Point1,
+    }
+
+    VersionStrings = {
+        Version95: '9.5',
+        Version96: '9.6',
+        Version2022Point1: '2022.1'
+    }
+
+    NextVersion = {
+        Version95: Version96,
+        Version96: Version2022Point1,
+        Version2022Point1: Invalid
     }
 
     @staticmethod
