@@ -11,6 +11,8 @@ from epjson_transition.version import KnownVersions
 class OutputVariable:
     def __init__(self, output_variable_changes_this_version: Dict):
         self.output_variable_map = output_variable_changes_this_version
+        self.modified_content = None
+        self.upper_case_variable_map = None
 
     def _upper_case_variable_map(self):
         new_variable_map = {}
@@ -18,55 +20,54 @@ class OutputVariable:
             new_variable_map[k.upper()] = v
         return new_variable_map
 
+    def replace_one_variable_type(self, file_contents: Dict, object_name: str, field_key: str, logger: SimpleLogger):
+        if object_name in file_contents:
+            objects = file_contents[object_name]
+            # replace the output variable name
+            for name, input_object in objects.items():
+                ov_original = input_object[field_key]
+                ov_original_upper = ov_original.upper()
+                if ov_original_upper in self.upper_case_variable_map:
+                    ov_new = self.upper_case_variable_map[ov_original.upper()]
+                    if ov_new is None:
+                        logger.print(f"Found {object_name} to delete: {ov_original}")
+                        del self.modified_content[object_name][name]
+                    elif isinstance(ov_new, list):
+                        logger.print(f"Found {object_name} to replace, spawning {len(ov_new)} new {object_name}'s")
+                        for i, ov_new_item in enumerate(ov_new):
+                            item_to_copy = deepcopy(self.modified_content[object_name][name])
+                            item_to_copy[field_key] = ov_new_item
+                            self.modified_content[object_name][f"{ov_original}_{i + 1}"] = item_to_copy
+                        # now delete the parent
+                        del self.modified_content[object_name][name]
+                    else:
+                        logger.print(f"Found {object_name} to replace, going from {ov_original} to {ov_new}")
+                        self.modified_content[object_name][name][field_key] = ov_new
+
     def transform(self, file_contents: Dict, logger: SimpleLogger) -> Dict:
         logger.print("Processing Output Variable Changes")
-        modified_content = deepcopy(file_contents)
-        upper_case_variable_map = self._upper_case_variable_map()
-        if 'Output:Variable' in file_contents:
-            output_variables = file_contents['Output:Variable']
-            # replace the output variable name
-            for name, ov in output_variables.items():
-                ov_original = ov['variable_name']
-                ov_original_upper = ov_original.upper()
-                if ov_original_upper in upper_case_variable_map:
-                    ov_new = upper_case_variable_map[ov_original.upper()]
-                    if ov_new is None:
-                        logger.print(f"Found output variable to delete: {ov_original}")
-                        del modified_content['Output:Variable'][name]
-                    elif isinstance(ov_new, list):
-                        logger.print(f"Found output variable to replace, spawning {len(ov_new)} new variables")
-                        for i, ov_new_item in enumerate(ov_new):
-                            item_to_copy = deepcopy(modified_content['Output:Variable'][name])
-                            item_to_copy['variable_name'] = ov_new_item
-                            modified_content['Output:Variable'][f"{ov_original}_{i + 1}"] = item_to_copy
-                        # now delete the parent
-                        del modified_content['Output:Variable'][name]
-                    else:
-                        logger.print(f"Found output variable to replace, going from {ov_original} to {ov_new}")
-                        modified_content['Output:Variable'][name]['variable_name'] = ov_new
-        if 'EnergyManagementSystem:Sensor' in file_contents:
-            sensors = file_contents['EnergyManagementSystem:Sensor']
-            for name, sensor in sensors.items():
-                ov_original = sensor['output_variable_or_output_meter_name']
-                ov_original_upper = ov_original.upper()
-                if ov_original_upper in upper_case_variable_map:
-                    ov_new = upper_case_variable_map[ov_original.upper()]
-                    if ov_new is None:
-                        logger.print(f"Found EMS sensor variable to delete: {ov_original}")
-                        del modified_content['EnergyManagementSystem:Sensor'][name]
-                    elif isinstance(ov_new, list):
-                        logger.print(f"Found EMS sensor variable to replace, spawning {len(ov_new)} new sensors")
-                        for i, ov_new_item in enumerate(ov_new):
-                            item_to_copy = deepcopy(modified_content['EnergyManagementSystem:Sensor'][name])
-                            item_to_copy['output_variable_or_output_meter_name'] = ov_new_item
-                            modified_content['EnergyManagementSystem:Sensor'][f"{ov_original}_{i + 1}"] = item_to_copy
-                        # now delete the parent
-                        del modified_content['EnergyManagementSystem:Sensor'][name]
-                    else:
-                        logger.print(f"Found ENS sensor variable to replace, going from {ov_original} to {ov_new}")
-                        modified_content['EnergyManagementSystem:Sensor'][name][
-                            'output_variable_or_output_meter_name'] = ov_new
-        return modified_content
+        self.modified_content = deepcopy(file_contents)
+        self.upper_case_variable_map = self._upper_case_variable_map()
+        object_name = 'Output:Variable'
+        field_key = 'variable_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'EnergyManagementSystem:Sensor'
+        field_key = 'output_variable_or_output_meter_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'Output:Meter'
+        field_key = 'key_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'Output:Meter:MeterFileOnly'
+        field_key = 'key_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'Output:Meter:Cumulative'
+        field_key = 'key_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'Output:Meter:Cumulative:MeterFileOnly'
+        field_key = 'key_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+
+        return self.modified_content
 
 
 class Version:

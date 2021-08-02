@@ -99,6 +99,23 @@ class TestOutputVariableRule(unittest.TestCase):
         }
         self.assertDictEqual(expected_outputs, updated_contents)
 
+    def test_transform_some_meters_variables(self):
+        file_contents = {
+            'Output:Meter': {'Output:Meter 1': {"key_name": "m"}},
+            'Output:Meter:MeterFileOnly': {'Output:Meter:MeterFileOnly 1': {"key_name": "m"}},
+            'Output:Meter:Cumulative': {'Output:Meter:Cumulative 1': {"key_name": "m"}},
+            'Output:Meter:Cumulative:MeterFileOnly': {'Output:Meter:Cumulative:MeterFileOnly 1': {"key_name": "m"}},
+        }
+        ov = OutputVariable({"m": "n"})
+        updated_contents = ov.transform(file_contents, self.muted_logger)
+        expected_outputs = {
+            'Output:Meter': {'Output:Meter 1': {"key_name": "n"}},
+            'Output:Meter:MeterFileOnly': {'Output:Meter:MeterFileOnly 1': {"key_name": "n"}},
+            'Output:Meter:Cumulative': {'Output:Meter:Cumulative 1': {"key_name": "n"}},
+            'Output:Meter:Cumulative:MeterFileOnly': {'Output:Meter:Cumulative:MeterFileOnly 1': {"key_name": "n"}},
+        }
+        self.assertDictEqual(expected_outputs, updated_contents)
+
     def test_output_variable_is_deleted(self):
         file_contents = {
             'Output:Variable': {
