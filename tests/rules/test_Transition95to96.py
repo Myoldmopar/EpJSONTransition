@@ -17,9 +17,22 @@ class TestEPlus9596Rule(unittest.TestCase):
 
     def test_transform(self):
         file_contents = {
-            "Hello": "World"
+            "AirLoopHVAC:OutdoorAirSystem": {
+                "OA Sys 1": {
+                    "availability_manager_list_name": "Outdoor Air 1 Avail List",
+                    "controller_list_name": "OA Sys 1 Controllers",
+                    "outdoor_air_equipment_list_name": "OA Sys 1 Equipment"
+                }
+            }
         }
         t = EnergyPlus9596()
         updated_contents = t.transform(file_contents, self.muted_logger)
-        expected_contents = {'Hello': 'World', 'Foo': 'Bar'}
+        expected_contents = {
+            "AirLoopHVAC:OutdoorAirSystem": {
+                "OA Sys 1": {
+                    "controller_list_name": "OA Sys 1 Controllers",
+                    "outdoor_air_equipment_list_name": "OA Sys 1 Equipment"
+                }
+            }
+        }
         self.assertDictEqual(expected_contents, updated_contents)
