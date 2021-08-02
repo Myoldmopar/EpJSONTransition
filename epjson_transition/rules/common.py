@@ -106,8 +106,9 @@ class Version:
         sub_object = epjson_version_object["Version 1"]
         version_id = sub_object["version_identifier"]
         original_version = KnownVersions.version_enum_from_string(version_id)
-        # TODO: Validate original version
+        # TODO: Check if we need to sanitize the version or not here, it may already be done in the Version class
         new_version = KnownVersions.NextVersion[original_version]
         new_version_string = KnownVersions.VersionStrings[new_version]
+        logger.print(f"Changing file version from {version_id} to {new_version_string}")
         file_contents['Version']['Version 1']['version_identifier'] = new_version_string
         return file_contents

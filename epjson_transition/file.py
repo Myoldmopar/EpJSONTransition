@@ -60,7 +60,7 @@ class EpJSONFile:
         logger.add_prefix()
         transitioned_data = transition_instance.transform(transitioned_data, logger)
         logger.remove_prefix()
-        logger.print(f"Writing Updated Output File at {self.output_file_path} (pretend)")
+        logger.print(f"Writing Updated Output File at {self.output_file_path}")
         with self.output_file_path.open('w') as f:
-            f.write(dumps(transitioned_data, indent=2))
+            print(dumps(transitioned_data, indent=4), file=f)
         logger.print("File Transformation Complete")

@@ -2,7 +2,7 @@
 
 block_cipher = None
 
-a = Analysis(['main.py'],
+a = Analysis(['epjson_transition/main.py'],
              binaries=[],
              datas=[],
              hiddenimports=[],
