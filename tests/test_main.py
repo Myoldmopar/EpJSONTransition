@@ -1,5 +1,6 @@
 from json import dumps
 import io
+from platform import system
 import sys
 from tempfile import mkstemp
 import unittest
@@ -10,13 +11,15 @@ from epjson_transition.main import main
 class TestMainEntryPoint(unittest.TestCase):
 
     def setUp(self) -> None:
-        # mute stdout to avoid usage statement
-        suppress_text = io.StringIO()
-        sys.stdout = suppress_text
+        # mute stdout to avoid usage statement, but not on Windows
+        if system() != 'Windows':
+            suppress_text = io.StringIO()
+            sys.stdout = suppress_text
 
     def tearDown(self) -> None:
         # reset stdout here
-        sys.stdout = sys.__stdout__
+        if system() != 'Windows':
+            sys.stdout = sys.__stdout__
 
     def test_main_function_not_enough_args(self):
         sys.argv = ['ScriptName', 'Not Enough']
