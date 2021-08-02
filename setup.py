@@ -7,7 +7,7 @@ readme_contents = readme_file.read_text()
 
 setup(
     name="EnergyPlus EpJSON Transition Tool",
-    version="0.32",
+    version="0.33",
     description="A tool for converting EpJSON files which may need changing from one version to another",
     long_description=readme_contents,
     long_description_content_type='text/markdown',
