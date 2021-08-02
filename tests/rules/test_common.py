@@ -105,6 +105,23 @@ class TestOutputVariableRule(unittest.TestCase):
             'Output:Meter:MeterFileOnly': {'Output:Meter:MeterFileOnly 1': {"key_name": "m"}},
             'Output:Meter:Cumulative': {'Output:Meter:Cumulative 1': {"key_name": "m"}},
             'Output:Meter:Cumulative:MeterFileOnly': {'Output:Meter:Cumulative:MeterFileOnly 1': {"key_name": "m"}},
+            'Output:Table:TimeBins': {'Output:Table:TimeBins 1': {"key_value": "*", 'variable_name': "m"}},
+            'ExternalInterface:FunctionalMockupUnitImport:From:Variable': {
+                'ExternalInterface:FunctionalMockupUnitImport:From:Variable 1': {
+                    "key_value": "*", 'output_variable_name': "m"
+                }
+            },
+            'ExternalInterface:FunctionalMockupUnitExport:From:Variable': {
+                'ExternalInterface:FunctionalMockupUnitExport:From:Variable 1': {
+                    "key_value": "*", 'output_variable_name': "m"
+                }
+            },
+            'DemandManagerAssignmentList': {'DemandManagerAssignmentList 1': {"meter_name": "m"}},
+            'UtilityCost:Tariff': {'UtilityCost:Tariff 1': {"output_meter_name": "m"}},
+            'ElectricLoadCenter:Distribution': {'ElectricLoadCenter:Distribution 1': {
+                "generator_track_meter_scheme_meter_name": "m",
+                "storage_control_track_meter_name": "m"}
+            },
         }
         ov = OutputVariable({"m": "n"})
         updated_contents = ov.transform(file_contents, self.muted_logger)
@@ -113,6 +130,23 @@ class TestOutputVariableRule(unittest.TestCase):
             'Output:Meter:MeterFileOnly': {'Output:Meter:MeterFileOnly 1': {"key_name": "n"}},
             'Output:Meter:Cumulative': {'Output:Meter:Cumulative 1': {"key_name": "n"}},
             'Output:Meter:Cumulative:MeterFileOnly': {'Output:Meter:Cumulative:MeterFileOnly 1': {"key_name": "n"}},
+            'Output:Table:TimeBins': {'Output:Table:TimeBins 1': {"key_value": "*", 'variable_name': "n"}},
+            'ExternalInterface:FunctionalMockupUnitImport:From:Variable': {
+                'ExternalInterface:FunctionalMockupUnitImport:From:Variable 1': {
+                    "key_value": "*", 'output_variable_name': "n"
+                }
+            },
+            'ExternalInterface:FunctionalMockupUnitExport:From:Variable': {
+                'ExternalInterface:FunctionalMockupUnitExport:From:Variable 1': {
+                    "key_value": "*", 'output_variable_name': "n"
+                }
+            },
+            'DemandManagerAssignmentList': {'DemandManagerAssignmentList 1': {"meter_name": "n"}},
+            'UtilityCost:Tariff': {'UtilityCost:Tariff 1': {"output_meter_name": "n"}},
+            'ElectricLoadCenter:Distribution': {'ElectricLoadCenter:Distribution 1': {
+                "generator_track_meter_scheme_meter_name": "n",
+                "storage_control_track_meter_name": "n"}
+            },
         }
         self.assertDictEqual(expected_outputs, updated_contents)
 

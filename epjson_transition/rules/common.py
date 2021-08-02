@@ -24,6 +24,7 @@ class OutputVariable:
         if object_name in file_contents:
             objects = file_contents[object_name]
             # replace the output variable name
+            list_of_objects_to_remove = []
             for name, input_object in objects.items():
                 ov_original = input_object[field_key]
                 ov_original_upper = ov_original.upper()
@@ -31,7 +32,7 @@ class OutputVariable:
                     ov_new = self.upper_case_variable_map[ov_original.upper()]
                     if ov_new is None:
                         logger.print(f"Found {object_name} to delete: {ov_original}")
-                        del self.modified_content[object_name][name]
+                        list_of_objects_to_remove.append((object_name, name))
                     elif isinstance(ov_new, list):
                         logger.print(f"Found {object_name} to replace, spawning {len(ov_new)} new {object_name}'s")
                         for i, ov_new_item in enumerate(ov_new):
@@ -39,13 +40,16 @@ class OutputVariable:
                             item_to_copy[field_key] = ov_new_item
                             self.modified_content[object_name][f"{ov_original}_{i + 1}"] = item_to_copy
                         # now delete the parent
-                        del self.modified_content[object_name][name]
+                        list_of_objects_to_remove.append((object_name, name))
                     else:
                         logger.print(f"Found {object_name} to replace, going from {ov_original} to {ov_new}")
                         self.modified_content[object_name][name][field_key] = ov_new
+            for r in list_of_objects_to_remove:
+                del self.modified_content[r[0]][r[1]]
 
     def transform(self, file_contents: Dict, logger: SimpleLogger) -> Dict:
         logger.print("Processing Output Variable Changes")
+        # TODO: I don't think we need a deepcopy here
         self.modified_content = deepcopy(file_contents)
         self.upper_case_variable_map = self._upper_case_variable_map()
         object_name = 'Output:Variable'
@@ -66,7 +70,30 @@ class OutputVariable:
         object_name = 'Output:Meter:Cumulative:MeterFileOnly'
         field_key = 'key_name'
         self.replace_one_variable_type(file_contents, object_name, field_key, logger)
-
+        object_name = 'Output:Table:TimeBins'
+        field_key = 'variable_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'ExternalInterface:FunctionalMockupUnitImport:From:Variable'
+        field_key = 'output_variable_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'ExternalInterface:FunctionalMockupUnitExport:From:Variable'
+        field_key = 'output_variable_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        # TODO: Output:Table:Monthly
+        # TODO: Meter:Custom
+        # TODO: Meter:Custom:Decrement
+        object_name = 'DemandManagerAssignmentList'
+        field_key = 'meter_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'UtilityCost:Tariff'
+        field_key = 'output_meter_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'ElectricLoadCenter:Distribution'
+        field_key = 'generator_track_meter_scheme_meter_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
+        object_name = 'ElectricLoadCenter:Distribution'
+        field_key = 'storage_control_track_meter_name'
+        self.replace_one_variable_type(file_contents, object_name, field_key, logger)
         return self.modified_content
 
 
