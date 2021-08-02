@@ -20,31 +20,52 @@ class OutputVariable:
 
     def transform(self, file_contents: Dict, logger: SimpleLogger) -> Dict:
         logger.print("Processing Output Variable Changes")
-        if 'Output:Variable' not in file_contents:
-            return file_contents
-        output_variables = file_contents['Output:Variable']
-        upper_case_variable_map = self._upper_case_variable_map()
         modified_content = deepcopy(file_contents)
-        # replace the output variable name
-        for name, ov in output_variables.items():
-            ov_original = ov['variable_name']
-            ov_original_upper = ov_original.upper()
-            if ov_original_upper in upper_case_variable_map:
-                ov_new = upper_case_variable_map[ov_original.upper()]
-                if ov_new is None:
-                    logger.print(f"Found output variable to delete: {ov_original}")
-                    del modified_content['Output:Variable'][name]
-                elif isinstance(ov_new, list):
-                    logger.print(f"Found output variable to replace, spawning {len(ov_new)} new variables")
-                    for i, ov_new_item in enumerate(ov_new):
-                        item_to_copy = deepcopy(modified_content['Output:Variable'][name])
-                        item_to_copy['variable_name'] = ov_new_item
-                        modified_content['Output:Variable'][f"{ov_original}_{i+1}"] = item_to_copy
-                    # now delete the parent
-                    del modified_content['Output:Variable'][name]
-                else:
-                    logger.print(f"Found output variable to replace, going from {ov_original} to {ov_new}")
-                    modified_content['Output:Variable'][name]['variable_name'] = ov_new
+        upper_case_variable_map = self._upper_case_variable_map()
+        if 'Output:Variable' in file_contents:
+            output_variables = file_contents['Output:Variable']
+            # replace the output variable name
+            for name, ov in output_variables.items():
+                ov_original = ov['variable_name']
+                ov_original_upper = ov_original.upper()
+                if ov_original_upper in upper_case_variable_map:
+                    ov_new = upper_case_variable_map[ov_original.upper()]
+                    if ov_new is None:
+                        logger.print(f"Found output variable to delete: {ov_original}")
+                        del modified_content['Output:Variable'][name]
+                    elif isinstance(ov_new, list):
+                        logger.print(f"Found output variable to replace, spawning {len(ov_new)} new variables")
+                        for i, ov_new_item in enumerate(ov_new):
+                            item_to_copy = deepcopy(modified_content['Output:Variable'][name])
+                            item_to_copy['variable_name'] = ov_new_item
+                            modified_content['Output:Variable'][f"{ov_original}_{i + 1}"] = item_to_copy
+                        # now delete the parent
+                        del modified_content['Output:Variable'][name]
+                    else:
+                        logger.print(f"Found output variable to replace, going from {ov_original} to {ov_new}")
+                        modified_content['Output:Variable'][name]['variable_name'] = ov_new
+        if 'EnergyManagementSystem:Sensor' in file_contents:
+            sensors = file_contents['EnergyManagementSystem:Sensor']
+            for name, sensor in sensors.items():
+                ov_original = sensor['output_variable_or_output_meter_name']
+                ov_original_upper = ov_original.upper()
+                if ov_original_upper in upper_case_variable_map:
+                    ov_new = upper_case_variable_map[ov_original.upper()]
+                    if ov_new is None:
+                        logger.print(f"Found EMS sensor variable to delete: {ov_original}")
+                        del modified_content['EnergyManagementSystem:Sensor'][name]
+                    elif isinstance(ov_new, list):
+                        logger.print(f"Found EMS sensor variable to replace, spawning {len(ov_new)} new sensors")
+                        for i, ov_new_item in enumerate(ov_new):
+                            item_to_copy = deepcopy(modified_content['EnergyManagementSystem:Sensor'][name])
+                            item_to_copy['output_variable_or_output_meter_name'] = ov_new_item
+                            modified_content['EnergyManagementSystem:Sensor'][f"{ov_original}_{i + 1}"] = item_to_copy
+                        # now delete the parent
+                        del modified_content['EnergyManagementSystem:Sensor'][name]
+                    else:
+                        logger.print(f"Found ENS sensor variable to replace, going from {ov_original} to {ov_new}")
+                        modified_content['EnergyManagementSystem:Sensor'][name][
+                            'output_variable_or_output_meter_name'] = ov_new
         return modified_content
 
 

@@ -56,6 +56,49 @@ class TestOutputVariableRule(unittest.TestCase):
         expected_outputs['Output:Variable']['Output:Variable 3']['variable_name'] = "ALL UPPER CASE FOR FUN"
         self.assertDictEqual(expected_outputs, updated_contents)
 
+    def test_transform_some_ems_variables(self):
+        file_contents = {
+            'EnergyManagementSystem:Sensor': {
+                'EnergyManagementSystem:Sensor 1': {
+                    "output_variable_or_output_meter_index_key_name": "*",
+                    "output_variable_or_output_meter_name": "Site Outdoor Air Drybulb Temperature"
+                },
+                'EnergyManagementSystem:Sensor 2': {
+                    "output_variable_or_output_meter_index_key_name": "*",
+                    "output_variable_or_output_meter_name": "Boiler Inlet Temperature"
+                },
+                'EnergyManagementSystem:Sensor 3': {
+                    "output_variable_or_output_meter_index_key_name": "Plant Loop 1",
+                    "output_variable_or_output_meter_name": "Plant Supply Side Unmet Demand Rate"
+                },
+                'EnergyManagementSystem:Sensor 4': {
+                    "output_variable_or_output_meter_index_key_name": "Zone 1",
+                    "output_variable_or_output_meter_name": "Zone Mean Air Temperature"
+                }
+            }
+        }
+        ov = OutputVariable({
+            "Site Outdoor Air Drybulb Temperature": "New Outdoor TEMP",
+            "Plant Supply Side Unmet Demand Rate": "ALL UPPER CASE FOR FUN",
+            "Boiler Inlet Temperature": None,
+            "Zone Mean Air Temperature": ['A', 'B']
+        })
+        updated_contents = ov.transform(file_contents, self.muted_logger)
+        expected_outputs = file_contents
+        expected_outputs['EnergyManagementSystem:Sensor']['EnergyManagementSystem:Sensor 1'][
+            'output_variable_or_output_meter_name'] = "New Outdoor TEMP"
+        expected_outputs['EnergyManagementSystem:Sensor']['EnergyManagementSystem:Sensor 3'][
+            'output_variable_or_output_meter_name'] = "ALL UPPER CASE FOR FUN"
+        del expected_outputs['EnergyManagementSystem:Sensor']['EnergyManagementSystem:Sensor 2']
+        del expected_outputs['EnergyManagementSystem:Sensor']['EnergyManagementSystem:Sensor 4']
+        expected_outputs['EnergyManagementSystem:Sensor']['Zone Mean Air Temperature_1'] = {
+            'output_variable_or_output_meter_index_key_name': 'Zone 1', 'output_variable_or_output_meter_name': 'A'
+        }
+        expected_outputs['EnergyManagementSystem:Sensor']['Zone Mean Air Temperature_2'] = {
+            'output_variable_or_output_meter_index_key_name': 'Zone 1', 'output_variable_or_output_meter_name': 'B'
+        }
+        self.assertDictEqual(expected_outputs, updated_contents)
+
     def test_output_variable_is_deleted(self):
         file_contents = {
             'Output:Variable': {
