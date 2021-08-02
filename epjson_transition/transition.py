@@ -11,7 +11,6 @@ class EpJSONTransition:
         if not input_file_object.exists():
             raise MissingEpJSONFile("Could not locate EpJSON file, expected at " + str(input_file_object))
         self.input_file_object = input_file_object
-        output_file_object.unlink(missing_ok=True)
         self.output_file_object = output_file_object
 
     def transform(self, logger: SimpleLogger):

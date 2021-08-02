@@ -24,6 +24,8 @@ def main() -> int:
     except EpJSONTransitionError:
         print("Caught EpJSON transition error during execution")
         return 1
+    finally:
+        logger.close()
     # except Exception as e:
     #    print("Caught unknown exception during execution, message: " + str(e))
     #    return 1
