@@ -55,3 +55,100 @@ class TestOutputVariableRule(unittest.TestCase):
         expected_outputs['Output:Variable']['Output:Variable 1']['variable_name'] = "New Outdoor TEMP"
         expected_outputs['Output:Variable']['Output:Variable 3']['variable_name'] = "ALL UPPER CASE FOR FUN"
         self.assertDictEqual(expected_outputs, updated_contents)
+
+    def test_output_variable_is_deleted(self):
+        file_contents = {
+            'Output:Variable': {
+                'Output:Variable 1': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "Site Outdoor Air Drybulb Temperature"
+                },
+                'Output:Variable 2': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "Boiler Inlet Temperature"
+                },
+                'Output:Variable 3': {
+                    "key_value": "Plant Loop 1",
+                    "reporting_frequency": "Daily",
+                    "variable_name": "Plant Supply Side Unmet Demand Rate"
+                }
+            }
+        }
+        ov = OutputVariable({
+            "Site Outdoor Air Drybulb Temperature": "New Outdoor TEMP",
+            "Boiler Inlet Temperature": None
+        })
+        updated_contents = ov.transform(file_contents, self.muted_logger)
+        expected_outputs = {
+            'Output:Variable': {
+                'Output:Variable 1': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "New Outdoor TEMP"
+                },
+                'Output:Variable 3': {
+                    "key_value": "Plant Loop 1",
+                    "reporting_frequency": "Daily",
+                    "variable_name": "Plant Supply Side Unmet Demand Rate"
+                }
+            }
+        }
+        self.assertDictEqual(expected_outputs, updated_contents)
+
+    def test_output_variable_is_list(self):
+        file_contents = {
+            'Output:Variable': {
+                'Output:Variable 1': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "Site Outdoor Air Drybulb Temperature"
+                },
+                'Output:Variable 2': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "Boiler Inlet Temperature"
+                },
+                'Output:Variable 3': {
+                    "key_value": "Plant Loop 1",
+                    "reporting_frequency": "Daily",
+                    "variable_name": "Plant Supply Side Unmet Demand Rate"
+                }
+            }
+        }
+        ov = OutputVariable({
+            "Site Outdoor Air Drybulb Temperature": "New Outdoor TEMP",
+            "Boiler Inlet Temperature": ['A', 'B', 'C']
+        })
+        updated_contents = ov.transform(file_contents, self.muted_logger)
+        expected_outputs = {
+            'Output:Variable': {
+                'Output:Variable 1': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "New Outdoor TEMP"
+                },
+                'Output:Variable 3': {
+                    "key_value": "Plant Loop 1",
+                    "reporting_frequency": "Daily",
+                    "variable_name": "Plant Supply Side Unmet Demand Rate"
+                },
+                'Boiler Inlet Temperature_1': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "A"
+                },
+                'Boiler Inlet Temperature_2': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "B"
+                },
+                'Boiler Inlet Temperature_3': {
+                    "key_value": "*",
+                    "reporting_frequency": "Hourly",
+                    "variable_name": "C"
+                },
+            }
+        }
+        self.assertDictEqual(expected_outputs, updated_contents)

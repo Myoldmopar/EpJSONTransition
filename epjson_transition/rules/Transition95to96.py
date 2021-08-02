@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Dict
 
 from epjson_transition.logger import SimpleLogger
@@ -17,8 +18,14 @@ class EnergyPlus9596(EpJSONTransitionRuleBase):
 
     def transform(self, file_contents: Dict, logger: SimpleLogger) -> Dict:
         logger.print("Transitioning File Now")
-        file_contents["Foo"] = "Bar"
-        return file_contents
+        modified_contents = deepcopy(file_contents)
+        modified_contents["Foo"] = "Bar"
+        return modified_contents
 
     def variable_map(self):
+        """
+        Output variable replacements, map each input output variable name to a new name for direct replacement,
+        or map it to None to delete it, or map it to an array if it should spawn multiple.
+        :return:
+        """
         return {'Site Outdoor Air Drybulb Temperature': 'Fake Outdoor DB Temp'}
